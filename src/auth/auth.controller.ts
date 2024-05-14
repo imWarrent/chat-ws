@@ -5,14 +5,16 @@ import { ApiTags } from '@nestjs/swagger';
 import { VerifyAuthDto } from './dto/verify-auth.dto';
 import { Roles } from 'src/common/enums/roles.enum';
 import { UserRoles } from 'src/common/decorators/roles.decorator';
+import { JwtGuard } from './jwt/jwt.guard';
+import { RolesGuard } from 'src/common/guards/roles-guard';
 
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @UseGuards(JwtGuard, new RolesGuard([Roles.MODERATOR, Roles.USER]))
   @Post('/get')
-  @UserRoles(Roles.MODERATOR)
   public async get() {
     return 'Nyek';
   }

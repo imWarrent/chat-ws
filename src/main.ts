@@ -11,6 +11,11 @@ async function bootstrap() {
     .setTitle('Chat Socket')
     .setDescription('Chat Socker Rest API')
     .setVersion('1.0')
+    .addSecurity('JWT', {
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT'
+    })
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);

@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { PrismaClient } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
-import * as dayjs from 'dayjs';
 import * as argon2 from 'argon2';
 import { VerifyAuthDto } from './dto/verify-auth.dto';
 @Injectable()
@@ -11,6 +10,7 @@ export class AuthService {
     private prismaClient: PrismaClient,
     private jwtService: JwtService
   ) {}
+
   public async create(createAuthDto: CreateAuthDto) {
     try {
       const hash = await argon2.hash(createAuthDto.hashed);
@@ -40,9 +40,7 @@ export class AuthService {
             roles: findUser.roles
           };
           return {
-            access_token: await this.jwtService.signAsync(payload, {
-              secret: process.env.JWT_SECRET
-            }),
+            access_token: await this.getToken(payload),
             payload
           };
         }
@@ -51,5 +49,11 @@ export class AuthService {
     } catch (err) {
       console.log(err);
     }
+  }
+
+  public async getToken(payload) {
+    return await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_SECRET
+    });
   }
 }
