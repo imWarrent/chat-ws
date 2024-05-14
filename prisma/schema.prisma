@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model UserAccount {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  uuid      String   @unique() @default(uuid())
+  createdAt DateTime @default(now())
+  isDeleted Boolean  @default(false)
+
+  username       String        @unique()
+  hashed         String
+  status         AccountStatus @default(ACTIVE)
+  suspendedUntil DateTime?
+  roles          String[]
+}
+
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+  BANNED
+}
